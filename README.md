@@ -1,117 +1,397 @@
+![social preview](social-dark.png)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+<p align="center">
+  <a href="https://pub.dev/packages/fair"><img src="https://img.shields.io/badge/pub-3.1.0-orange" alt="pub"></a>
+  <a href="https://github.com/wuba/fair"><img src="https://img.shields.io/badge/platform-flutter-blue.svg" alt="github"></a>
+  <a href="https://fair.58.com/"><img src="https://img.shields.io/badge/doc-fair.58.com-green.svg" alt="doc"></a>
+  <a href="https://github.com/wuba/fair/LICENSE"><img src="https://img.shields.io/badge/license-BSD-green.svg" alt="license"></a>
+  <a href="https://github.com/wuba/fair/actions"><img src="https://github.com/wuba/fair/workflows/build/badge.svg" alt="build"></a>
+  <a href="https://gitter.im/flutter_fair/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/flutter_fair/community.svg" alt="Gitter"></a>
+</p>
+
 [简体中文](README-zh.md)|[English](README.md)
 
-## Introduction
+---
 
-WBBlades is a tool set based on `Mach-O` file parsing, including one-click detection for app  (supports `OC` and `Swift`), package size analysis (supports a single static library/dynamic library), point-to-point crash analysis ( analyse system crash log, based on symbol file and without symbol files),  Class automatic extraction and Hook capability based on Mach-O file. It mainly uses __Text assembly code analysis, architecture extraction, DYSM file stripping, symbol table stripping, crash file (ips) analysis technology.Support big method/small method parsing and iOS 15 above about dyld_chained_Fixups processing.
+Fair is a dynamic framework designed for Flutter. Through the automatic conversion of native Dart source files by the Fair Compiler tool, the project can obtain the ability to dynamically update the Widget Tree and State.
 
-### Tool Overview
+The goal of creating Fair is to support updates through business bundles and JS distribution without the release of versions (Android, iOS, Web), similar to React Native. After integrating with Flutter Fair, you can quickly publish new pages without waiting for your app's next release date. Fair provides standard widgets, which can be used as a new dynamic page or as part of an existing Flutter page, such as typography/style modification of operation bits, full page replacement, partial replacement, etc.
 
-| Tool Name                   | Function Overview                                            | Related Technologies                                         |
-| --------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| One-Click Detection for App | Swift & OC useless class detection, useless resource detection, and package downsizing optimization suggestions. | Disassembly, __Text instruction extraction, Mach-O parsing, symbol table and Swift class structure in Mach-O |
-| Package Size Analysis       | Detecting the actual size occupied by static & dynamic libraries in .ipa file. | Architecture stripping, static library structure analysis    |
-| Crash Analysis              | Using .app or dYSM file to parse the system crash log.       | DYSM file parsing, lightweight symbol table extraction, ips file parsing, with/without symbol table crash parsing |
-| Mach-O Class Hook           | Automatically extract classes from any Mach-O file, and then hook them. | dyld_ chained_ Fixups, binding, rebase, and big/small method parsing |
+![](what-is-fair-en.png)
 
-The new version  implements a comprehensive visual implementation of the toolset based on the original command-line-based operation of the above tools, and is designed for R&D efficiency improvement. In addition, in the analysis of difficult crashes, for some crashes that are not easy to reproduce and cannot be collected by general tools (the app process is directly killed by the operating system), a point-to-point crash analysis is provided.
+Fair's UI rendering is lossless and can be restored at the pixel level. Take a look at the effect of escaping some pages of Best Flutter UI Templates:
 
-## Installation
+![best-ui-template](best-ui-template.png)
+
+> The project used is from https://github.com/mitesh77/Best-Flutter-UI-Templates </br>
+> location：/example/lib/best_flutter_ui
+
+## 🏛Architecture
+
+![fair architecture](fair.png)
+
+## 🚀 Running
+Use Flutter Fair require few steps. 
+
+**step1：download fair project source code**
+
+It is recommended to download [fair](https://github.com/wuba/fair) to the local and dependencies on the relative path. 
+
+The download method is as follows:
 
 ```
-$ git clone https://github.com/wuba/WBBlades.git
-$ cd WBBlades
-$ pod install
+git clone https://github.com/wuba/fair.git
 ```
 
-### Usage of Visualization Tool
-Target selects "WBBladesCrashApp".
+**step2：Add dependency inside `pubspec.yaml`**
 
-Click the button on the left function area, select a tool such as Useless Classes Detection,Application Size Analysis,etc., and operate according to the prompts in the tool, and the result will be output to the text box;
+Assuming that the fair project and your own project are in the same folder:
 
-> Detailed introduction to visualization tool: [Detailed introduction to visualization tool](https://juejin.cn/post/7176441132447399993)
-### Usage for Mac Command Line
-Target selects "WBBlades"，Compile and build to generate command line tools
-Copy the generated product "blades" to /usr/local/bin，as follows：
-sudo cp ${Your_BUILD_DIR}/blades /usr/local/bin
+```yaml
+# add Fair dependency
+dependencies:
+  fair: 3.1.0
+
+# add build_runner and compiler dependency
+dev_dependencies:
+  build_runner: ^2.0.0
+  fair_compiler: ^1.6.0
+ 
+# switch "fair_version" according to the local Flutter SDK version
+# Flutter SDK 3.3.x(3.3.0、3.3.1、3.3.2、3.3.3、3.3.4、3.3.5、3.3.6) -> flutter_3_3_0
+# Flutter SDK 3.0.x(3.0.0、3.0.1、3.0.2、3.0.3、3.0.4、3.0.5) -> flutter_3_0_0
+# Flutter SDK 2.10.x(2.10.0、2.10.1、2.10.2、2.10.3) -> flutter_2_10_0
+# Flutter SDK 2.8.x(2.8.0、2.8.1) -> flutter_2_8_0
+# Flutter SDK 2.5.x(2.5.0、2.5.1、2.5.2、2.5.3) -> flutter_2_5_0
+# Flutter SDK 2.0.6 -> flutter_2_0_6
+# Flutter SDK 1.22.6 -> flutter_1_22_6
+dependency_overrides:
+  fair_version:
+    path: ../fair/flutter_version/flutter_3_3_0
+```
+
+**step3：Wrap your app with FairApp Widget**
+
+```dart
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  FairApp.runApplication(
+    _getApp(),
+    plugins: {
+    },
+  );
+}
+
+dynamic _getApp() => FairApp(
+  modules: {
+  },
+  delegate: {
+  },
+  child: MaterialApp(
+    home: FairWidget(
+            name: 'DynamicWidget',
+            path: 'assets/bundle/lib_src_page_dynamic_widget.fair.json',
+            data: {"fairProps": json.encode({})}),
+  ),
+);
+```
+
+**step4：Import a dynamic widget as FairWidget**
+
+```dart
+FairWidget(
+  name: 'DynamicWidget',
+  path: 'assets/bundle/lib_src_page_dynamic_widget.fair.json',
+  data: {"fairProps": json.encode({})}),
+```
+
+## DevTools
+fair development tools
+### Dart Commandline Tool [faircli](https://pub.dev/packages/faircli)
+
+create fair project
+
+**faircli install**
+```dart
+dart pub global activate faircli
+```
+
+**create fair dynamic project**
+```dart
+faircli create -n dynamic_project_name
+```
+**create fair carrier project**
+```dart
+faircli create -k carrier -n carrier_project_name
+```
+
+### IDEA Plugin [FairTemplate](https://plugins.jetbrains.com/plugin/20323-fairtemplate)
+
+Page/Component Template Code
+
+<html>
+<img src="fair_template.png" width="80%">
+</html>
+
+### DevTools flow chart
+![fair tools](fair_tools.png)
+
+### DevTools demo
+After using faircli to configure the local hot update service, open the developer options on the mobile device, select the local mode, enter the ip of the development machine, then preview fair dynamic effect
+
+<html>
+<div align="center">
+<img src="fair_tools.gif" width="30%">
+</div>
+</html>
+
+For more details, please refer to [fair_tools](fair_tools.md)
+
+## Fair-Online Platform
+Fair-Online is an integrated cloud development platform for Flutter developers, from online development of Flutter, to real-time compilation and preview, packaging and publishing, and dynamic release of end-side updates, to realize the dynamic online Flutter.
+
+Developers do not need to configure the Flutter development environment, develop and debug code online, compile and preview in real time, and what you see is what you get. Combined with the Flutter dynamic framework Fair and the hot update platform FairPushy created by the 58 open source team, Flutter online dynamics are realized.
+
+<html>
+<div align="center">
+<img src="./fair_online/fair_online.gif" width="90%">
+</div>
+</html>
+
+Online experience URL:
+[Fair-Online Platform](https://fair-online.58.com/)
+
+For more details, please refer to [fair_online](./fair_online/README.md)
+
+## Documentation
+For more details, please refer to [https://fair.58.com](https://fair.58.com)  
+### Tools
+Fair Cli: [Fair_CLI](https://pub.dev/packages/faircli)  
+IEDA plugin: [jetbrains_plugin_fair_template](https://plugins.jetbrains.com/plugin/20323-fairtemplate)  
+Hot update platform: [FAIR PUSHY](https://github.com/wuba/FairPushy)
+
+## versions
+
+### 3.1.0
+updateDate：2023.03.14
+
+- Upgrade analyzer library to 5.5.0;
+- Dart function to JS supports parameter passing;
+- JS Object value compatibility;
+- Remove kotlin dependencies from fair/android;
+- Add custom parsing for IconData;
+- The generation of optional positional parameters is modified to obtain pa;
+- Fixed missing OptionalPositional default values;
+- Remove the generation time from the generation.fair. dart comment;
+- Added the ignore unnecessary_import operation;
+- Fixed incorrect assignment of Sugar.switchCase key and defaultValue;
+- binding was changed to SplayTreeMap to increase search efficiency, especially for lists, where duplicate tags are searched for a short time;
+- Exposing specialBinding so that users can override a value;
+- When the provider is added to the _binding, the Settings set by the user prevail for quick modification;
+- Fixed the loadCoreJs package splicing problem;
+- Reduced minSdkVersion to 16;
+- runApplication supports specifying the package in which the JS resides;
+- Fixed error in calling context in the _reload method.
+
+### 3.0.0
+updateDate：2022.11.17
+
+- Fix class constructor parsing exception.
+- Fair Compatible Web.
+- Bindmap logic optimization.
+
+### 2.8.1
+updateDate：2022.11.01
+
+- Fixed：CustomScrollView reference external function builder bug.
+
+### 2.8.0
+updateDate：2022.10.21
+
+- Add support of Flutter SDK 3.3.0+.
+- Add Sugar：Sugar.isNestedScrollViewHeaderSliversBuilder、Sugar.isButtonStyle、Sugar.isDuration、Sugar.popMenuButton、Sugar.sliverChildBuilderDelegate、Sugar.sliverGridDelegateWithFixedCrossAxisCount.
+- Fixed some bugs.
+
+### 2.7.0
+updateDate：2022.08.10
+
+- Add support of Flutter SDK 3.0.0、3.0.1、3.0.2、3.0.3、3.0.4、3.0.5.
+- Fixed some bugs.
+
+#### Fair
+- Fair supports loading bundle files on the phone disk path;
+- Adapt to Flutter SDK 2.10.0, 2.10.1, 2.10.2, 2.10.3;
+- Dart2JS supports parsing static methods;
+- When running, the page error message prompts optimization;
+- Syntactic sugar supports parsing Model data.
+
+### 2.6.0
+updateDate：2022.07.05
+
+#### Fair
+- Fair supports loading bundle files on the phone disk path;
+- Adapt to Flutter SDK 2.10.0, 2.10.1, 2.10.2, 2.10.3;
+- Dart2JS supports parsing static methods;
+- When running, the page error message prompts optimization;
+- Syntactic sugar supports parsing Model data.
+
+### 2.5.0
+updateDate：2022.05.31
+#### Fair
+Adapt to flutter SDK 2.8.0, 2.8.1  
+Dart2js supports parsing singletons  
+New syntax Sugar.switchCase、Sugar.colorsWithOpacity、Sugar.convertToString, etc  
+#### example
+Comprehensively optimize the example structure and upgrade the example experience, which is more suitable for beginners.  
+
+In the source code, an example project is added to provide the standard usage of fair API.  
+
+example location：`fair/example`
+
+### v2.4.1
+updateDate：2022.05.12  
+
+Fix FairLogger import problem.  
+Upgrade Analyzer to 2.3.0.  
+
+### v2.4.0
+updateDate：2022.04.26
+
+FlatBuffers supports generating bin files in a null safe environment  
+
+### v2.3.0
+updateDate: 2022.04.22
+
+#### Fair
+supports null-safe  
+Adapt to Flutter SDK 2.5.0, 2.5.1, 2.5.2, 2.5.3 and other versions  
+#### demo
+Upgrade the outdated demo in the sample project  
+Supplement the iOS runtime environment in the sample project  
+
+## 🕰2022 Roadmap
+
+* Major release plan
+   * null-safe version support, expected to be launched on April 22 ✅
+   * Flutter 2.8.0 version adaptation, expected to be launched in mid-May ✅
+   * Flutter 2.10.0 version adaptation, is expected to be launched in early June  ✅
+   * Flutter 3.0 version adaptation               ✅
+   * IDE syntax detection and hint plugin ✅
+   * Rich syntactic sugar
+* Hot update platform
+   * Dart Server project construction ✅
+   * Flutter Web project construction ✅
+   * Patch/resource management         ✅
+   * Project management                ✅
+   * Mobile Update&Download           ✅
+* Online dynamic
+   * Flutter Web project construction ✅
+   * Dart Server project construction ✅
+   * ActionEdit
+   * Code editing                     ✅
+   * Component editing
+   * Page editing
+   * Engineering editor
+   * Flutter effect preview
+   * Fair DSL preview
+* IDE plug-in
+   * Fair project generation
+   * Fair template generation
+   * Fair syntax detection
 
 
-- Unused Code Detection ObjC & Swift
+## 📱Accessed APPs
+<table>
+  <tr>
+    <td align="center"><img src="https://pic3.58cdn.com.cn/nowater/frs/n_v303052b2c3f3b4ea5a5989f5e52d71481.jpg" width="100px;" alt=""/><br /><sub><b>58阿姨</b></sub><br /></td>
+    <td align="center"><img src="https://pic5.58cdn.com.cn/nowater/frs/n_v3ba05182f1dc9460dab8e02d22914f700.jpg" width="100px;" alt=""/><br /><sub><b>移动经纪人</b></sub><br /></td>
+    <td align="center"><img src="https://pic7.58cdn.com.cn/nowater/frs/n_v35eecf738ac6c4ec992bfc0d1b8d910d4.jpg" width="100px;" alt=""/><br /><sub><b>安居拍房</b></sub><br /></td>
+    <td align="center"><img src="https://pic1.58cdn.com.cn/nowater/frs/n_v3b4fd1abf1e484d3da864a177a12a28e2.jpg" width="100px;" alt=""/><br /><sub><b>神奇保</b></sub><br /></td>
+    <td align="center"><img src="https://pic6.58cdn.com.cn/nowater/frs/n_v36e650b70b7834204959547bf616869ef.jpg" width="100px;" alt=""/><br /><sub><b>58商办通</b></sub><br /></td>
+    <td align="center"><img src="https://pic1.58cdn.com.cn/nowater/frs/n_v378fdb523858b4475b05fb04f66f105ae.jpg" width="100px;" alt=""/><br /><sub><b>58商家版</b></sub><br /></td>
+    <td align="center"><img src="https://pic6.58cdn.com.cn/nowater/frs/n_v31394c57d6c234aecad820c94dd1c8dc6.png" width="100px;" alt=""/><br /><sub><b>中华英才网</b></sub><br /></td>
+  </tr>
+</table>
 
-   `$ blades -unused xxx.app -from xxx.a xxx.a ....`
-   
-	> -from indicating that only the unused code in the following static libraries is analyzed. Without this parameter, the default is all classes in the APP.
-   
-- App Size Analysis (Directly measure the size of .a or .framework after linking)
+## ✨Contributors
 
-  `$ blades -size xxx.a xxx.framework ....`
-  
-  > Supporting input a folder path, all static libraries under the folder will be analyzed.
-  
-- Log Recovery without dSYM File (In the case of missing dSYM file, try `ObjC` crash stack symbolization, `Swift` is not supported)
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-  `$ blades -symbol xxx.app -logPath xxx.ips`
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/gongpengyang"><img src="https://avatars.githubusercontent.com/u/11691321?v=4?s=100" width="100px;" alt=""/><br /><sub><b>gongpengyang</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=gongpengyang" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/XIAOYUAOQISHI"><img src="https://avatars.githubusercontent.com/u/25222933?v=4?s=100" width="100px;" alt=""/><br /><sub><b>qixu</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=XIAOYUAOQISHI" title="Code">💻</a></td>
+    <td align="center"><a href="https://yancechen.github.io/"><img src="https://avatars.githubusercontent.com/u/19757728?v=4?s=100" width="100px;" alt=""/><br /><sub><b>陈有余</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=yancechen" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/yyzl0418"><img src="https://avatars.githubusercontent.com/u/14289945?v=4?s=100" width="100px;" alt=""/><br /><sub><b>yangyang</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=yyzl0418" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/wanbing"><img src="https://avatars.githubusercontent.com/u/7804234?v=4?s=100" width="100px;" alt=""/><br /><sub><b>wan</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=wanbing" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/bujiee"><img src="https://avatars.githubusercontent.com/u/16713978?v=4?s=100" width="100px;" alt=""/><br /><sub><b>bujie</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=bujiee" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/windkc"><img src="https://avatars.githubusercontent.com/u/59242966?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kc</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=windkc" title="Code">💻</a></td>
+    <td align="center"><a href="http://blog.hacktons.cn/"><img src="https://avatars.githubusercontent.com/u/1622234?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Wu</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=avenwu" title="Code">💻</a> <a href="https://github.com/wuba/fair/commits?author=avenwu" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/LinLeyang"><img src="https://avatars.githubusercontent.com/u/13174498?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Penta</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=LinLeyang" title="Code">💻</a> <a href="https://github.com/wuba/fair/commits?author=LinLeyang" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/153493932"><img src="https://avatars.githubusercontent.com/u/10431131?v=4?s=100" width="100px;" alt=""/><br /><sub><b>haijun</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=153493932" title="Code">💻</a> <a href="https://github.com/wuba/fair/commits?author=153493932" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/waynesonic"><img src="https://avatars.githubusercontent.com/u/5502794?v=4?s=100" width="100px;" alt=""/><br /><sub><b>waynesonic</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=waynesonic" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/paozhuanyinyu"><img src="https://avatars.githubusercontent.com/u/16041238?v=4?s=100" width="100px;" alt=""/><br /><sub><b>paozhuanyinyu</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=paozhuanyinyu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Alzzzz"><img src="https://avatars.githubusercontent.com/u/19664495?v=4?s=100" width="100px;" alt=""/><br /><sub><b>alzzzz</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=Alzzzz" title="Code">💻</a> <a href="https://github.com/wuba/fair/commits?author=Alzzzz" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/xiangwc"><img src="https://avatars.githubusercontent.com/u/22017021?v=4?s=100" width="100px;" alt=""/><br /><sub><b>xiangwc</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=xiangwc" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/KKProject"><img src="https://avatars.githubusercontent.com/u/14860258?v=4?s=100" width="100px;" alt=""/><br /><sub><b>WangYk</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=KKProject" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/JunZiJianYi"><img src="https://avatars.githubusercontent.com/u/34125737?v=4?s=100" width="100px;" alt=""/><br /><sub><b>SunWei</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=JunZiJianYi" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/shanpengtao"><img src="https://avatars.githubusercontent.com/u/7127463?v=4?s=100" width="100px;" alt=""/><br /><sub><b>单鹏涛</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=shanpengtao" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lswc225"><img src="https://avatars.githubusercontent.com/u/16609338?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lswc225</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=lswc225" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.gaofeiyu.com/"><img src="https://avatars.githubusercontent.com/u/6150536?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Goofy</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=gaofeiyu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/itzhaoqian"><img src="https://avatars.githubusercontent.com/u/23277488?v=4?s=100" width="100px;" alt=""/><br /><sub><b>itzhaoqian</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=itzhaoqian" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/xxliang"><img src="https://avatars.githubusercontent.com/u/5005255?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sunlight Xie</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=xxliang" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/a303268287"><img src="https://avatars.githubusercontent.com/u/19368353?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lhdycxgghb</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=a303268287" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/hlwhl"><img src="https://avatars.githubusercontent.com/u/7610615?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Prome</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=hlwhl" title="Code">💻</a></td>
+    </td>
+    <td align="center"><a href="https://github.com/hlwhl"><img src="https://avatars.githubusercontent.com/u/16477333?v=4" width="100px;" alt=""/><br /><sub><b>zmtzawqlp</b></sub></a><br /><a href="https://github.com/wuba/fair/commits?author=zmtzawqlp" title="Code">💻</a></td>
+  </tr>
+</table>
 
-## Tool Features
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
-### Unused code (unused class) detection support range
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
-| Description                     | Support | Code Example                                     |
-| :----------------------- | :----------: | :------------------------------------------- |
-| ObjC classes's static call       |      ✅       | `[MyClass new]`                              |
-| ObjC classes's dynamic call           |      ✅       | `NSClassFromString(@"MyClass")`              |
-| ObjC dynamic call througn string concatenation    |      ❌       | `NSClassFromString(@"My" + @"Class")`        |
-| ObjC load method         |      ✅       | `+load{...} `                                |
-| ObjC & Swift being inherited       |      ✅       | `SomClass : MyClass`                         |
-| ObjC & Swift being properties      |      ✅       | `@property (strong,atomic) MyClass *obj;`    |
-| Swift class direct call         |      ✅       | `MyClass.init()`                             |
-| Swift call using runtime    |      ❌       | `objc_getClass("Demo.MyClass")`              |
-| Swift generic parameters           |      ✅       | `SomeClass<MyClass>.init()`                  |
-| Swfit class dynamic call in ObjC   |      ✅       | `NSClassFromString("Demo.MyClass")`          |
-| Swift type declaration in the container |      ❌       | `var array:[MyClass]`                        |
-| Swift multiple nesting           |      ✅       | ` class SomeClass {class MyClass {...} ...}` |
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-### App Size Analysis Tool
+## 👏🏻Supporters
 
-Supports quick detection of the linked size of a static library. No need to compile and link. **For example: If you want to know how much app size will increase when an SDK is imported or updated, you can use `blades -size` to estimate the size**, without the need to connect the SDK to compile and link successfully to calculate.
+[![Stargazers repo roster for @wuba/fair](https://reporoster.com/stars/wuba/fair)](https://github.com/wuba/fair/stargazers)
 
-### Crash Log Symbolization Tool Without dSYM File
+[![Forkers repo roster for @wuba/fair](https://reporoster.com/forks/wuba/fair)](https://github.com/wuba/fair/network/members)
 
-In the case of losing the dSYM file, try to restore the log via `blades -symbol`. **For example, in an app packaging, the dSYM file is cleared after a period of time, but the app file is retained. In this case, you can consider using blades for symbolization. **Before using the tool, pay attention to a few points:
+## License
 
-- If your app is a debug package or a package that does not strip the symbol table, you can use `dsymutil app -o xx.dSYM `to extract the symbol table. Then use the symbol table to symbolize the log.
+Copyright (C) 2005-present, 58.com.  All rights reserved.
 
-- This tool only supports ObjC, and its principle is to determine the function of the crash by analyzing the address of the ObjC method in Mach-O. Therefore, it is not suitable for Swfit, C, and C++. In addition, tools are not omnipotent, and are only used as emergency supplementary technical means. In daily situations, it is recommended to use symbol tables for log symbolization.
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
 
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+    * Neither the name of 58.com nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
-## Contributing & Feedback
-
-We sincerely hope that developers can provide valuable comments and suggestions, and developers can provide feedback on suggestions and problems by submitting PR or Issue.
-
-If you are interested in WBBlades, you can join the WBBlades development group and discuss technical issues together. Please add the wechat account "zqlong320" or scan the QR code below as your friend and then we will invite you to join the group.
-
-![wechat_qrcode.png](imgs/wechat_qrcode.png)
-
-## Related Technical Articles
-- [58tongcheng Packet Size Management Tool Decryption](https://juejin.cn/post/7176441132447399993)
-- [Important Updates - Designed to Improve Performance](https://mp.weixin.qq.com/s/tXxhnDKerobyxoWuEBGjNQ)
-- [Point to Point Analyze and Governance of Crashes](https://mp.weixin.qq.com/s/tGvE-2flzhm4skkrfbUIBA)
-- [58tongcheng Size Analysis and Statistics for iOS Client Components](https://blog.csdn.net/csdnnews/article/details/100354658/)
-- [Unused Class Detection Based on Mach-O Disassembly](https://www.jianshu.com/p/c41ad330e81c)
-- [Open Source｜WBBlades：APP Analysis Tool Set Based on Mach-O File Analysis](https://mp.weixin.qq.com/s/HWJArO5y9G20jb2pqaAQWQ)
-- [The Storage Difference between Swift and ObjC from the Perspective of Mach-O](https://www.jianshu.com/p/ef0ff6ee6bc6)
-- [New Approach to Swift Hook - Virtual Method Table](https://mp.weixin.qq.com/s/mjwOVdPZUlEMgLUNdT6o9g)
-
-## Thanks
-
-GitHub: [https://github.com/aquynh/capstone](https://github.com/aquynh/capstone "GitHub for capstone")
-
-GitHub: [https://github.com/Sunnyyoung/SYFlatButton](https://github.com/Sunnyyoung/SYFlatButton "GitHub for SYFlatButton") 
-
-GitHub: [https://github.com/nygard/class-dump](https://github.com/nygard/class-dump "GitHub for class-dump")
-
-GitHub: [https://github.com/alexrozanski/PXListView](https://github.com/alexrozanski/PXListView "GitHub for PXListView")
-
-GitHub: [https://github.com/steventroughtonsmith/cartool](https://github.com/steventroughtonsmith/cartool "cartool")
-
-DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.net/dwarf.html#releases "Source Code for DWARF") 
-
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
