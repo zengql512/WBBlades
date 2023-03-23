@@ -117,7 +117,7 @@ DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.n
 
 
 ------
-<a name="WBBlades"> 简体中文</a> | [English](#WBBlades)
+<a name="WBBlades_cn"> 简体中文</a> | [English](#WBBlades)
 
 ## 简介
 
