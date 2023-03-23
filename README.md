@@ -116,6 +116,7 @@ GitHub: [https://github.com/steventroughtonsmith/cartool](https://github.com/ste
 DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.net/dwarf.html#releases "Source Code for DWARF") 
 
 
+
 ------
 <a name="WBBlades_cn"> 简体中文</a> | [English](#WBBlades)
 
@@ -151,7 +152,7 @@ target选择：WBBladesCrashApp
 
 点击左侧功能区按钮，点击进入无用类检测、包大小检测等工具，根据工具内的提示进行操作即可，具体的数据会输出到文本框中；
 
-> 可视化工具详细介绍: [可视化工具详细介绍](https://github.com/wuba/WBBlades)
+> 可视化工具详细介绍: [可视化工具详细介绍](https://juejin.cn/post/7176441132447399993)
 
 ### 命令行工具blades用法
 
