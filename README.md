@@ -1,5 +1,4 @@
-<a name="WBBlades">WBBlades</a>
-## [简体中文](#WBBlades_cn)|[English]
+<a name="WBBlades"> English </a> | [简体中文](#WBBlades_cn)
 
 ## Introduction
 
@@ -117,9 +116,9 @@ GitHub: [https://github.com/steventroughtonsmith/cartool](https://github.com/ste
 DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.net/dwarf.html#releases "Source Code for DWARF") 
 
 
-
-<a name="WBBlades_cn">WBBlades中文版</a>
-## [简体中文]|[English](#WBBlades)
+------
+<a name="WBBlades_cn">WBBlades简体中文</a>
+## [English](#WBBlades)
 
 ## 简介
 
