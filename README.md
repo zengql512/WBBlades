@@ -1,6 +1,6 @@
-## [简体中文](#WBBlades_cn)|[English]
+## [简体中文](#WBBlades_cn)|English
 
-<a name="WBBlades">WBBlades</a>
+<a name="WBBlades">WBBlades英文版</a>
 
 ## Introduction
 
@@ -119,7 +119,7 @@ DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.n
 
 
 
-## [简体中文]|[English](#WBBlades)
+## 简体中文|[English](#WBBlades)
 
 ---
 
@@ -222,7 +222,7 @@ sudo cp ${Your_BUILD_DIR}/blades /usr/local/bin
 
 对WBBlades感兴趣的小伙伴，可以加入WBBlades开发交流群，一起探讨技术问题，请先添加微信号"zqlong320"或者扫描下面的二维码为好友，备注WBBlades后，我们会邀请进群。
 
-![wechat_qrcode.png](/Users/zengqinglong/ToolProjects/WBBlades_zql/imgs/wechat_qrcode.png)
+![wechat_qrcode.png](imgs/wechat_qrcode.png)
 
 ## 相关技术文章
 
