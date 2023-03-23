@@ -1,6 +1,8 @@
-## [简体中文](#WBBlades_cn)|English
+<a name="WBBlades">English</a>
 
-## <a name="WBBlades">Introduction</a>
+## [简体中文](#WBBlades_cn)
+
+## Introduction
 
 WBBlades is a tool set based on `Mach-O` file parsing, including one-click detection for app  (supports `OC` and `Swift`), package size analysis (supports a single static library/dynamic library), point-to-point crash analysis ( analyse system crash log, based on symbol file and without symbol files),  Class automatic extraction and Hook capability based on Mach-O file. It mainly uses __Text assembly code analysis, architecture extraction, DYSM file stripping, symbol table stripping, crash file (ips) analysis technology.Support big method/small method parsing and iOS 15 above about dyld_chained_Fixups processing.
 
@@ -117,7 +119,9 @@ DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.n
 
 
 
-## <a name="WBBlades_cn">简体中文</a>|[English](#WBBlades)
+## <a name="WBBlades_cn">简体中文</a>
+
+## [English](#WBBlades)
 
 ---
 
