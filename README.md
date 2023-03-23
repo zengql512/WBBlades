@@ -1,6 +1,4 @@
-## [简体中文](#WBBlades_cn)|English
-
-<a name="WBBlades">WBBlades英文版</a>
+## <a name="WBBlades">[简体中文](#WBBlades_cn)|English</a>
 
 ## Introduction
 
@@ -119,11 +117,9 @@ DWARF: [https://www.prevanders.net/dwarf.html#releases](https://www.prevanders.n
 
 
 
-## 简体中文|[English](#WBBlades)
+## <a name="WBBlades_cn">简体中文|[English](#WBBlades</a>)
 
 ---
-
-<a name="WBBlades_cn">WBBlades中文版</a>
 
 ## 简介
 
